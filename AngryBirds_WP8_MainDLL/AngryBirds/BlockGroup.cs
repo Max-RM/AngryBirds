@@ -1,0 +1,17 @@
+namespace AngryBirds;
+
+public enum BlockGroup
+{
+	UNDEFINED,
+	WOOD_BLOCK,
+	LIGHT_BLOCK,
+	DECORATION,
+	STATIC_BLOCK,
+	PLATFORM,
+	EXTRA,
+	STATIC_FRAGILE_BLOCK,
+	CLOUD,
+	BIRDS,
+	PIGLETTES,
+	GROUND
+}

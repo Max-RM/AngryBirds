@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <AssemblyName>AngryBirds</AssemblyName>
+    <RootNamespace />
+    <ApplicationId>AngryBirds</ApplicationId>
+    <ApplicationDisplayVersion>1.5.3.0</ApplicationDisplayVersion>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <LangVersion>latest</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RollForward>Major</RollForward>
+    <ApplicationIcon>..\tools\launcher\AngryBirds.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <!-- .NET 8 SDK does not ship a native apphost for win-arm (ARM32). -->
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-arm'">
+    <UseAppHost>false</UseAppHost>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.2.1105" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Microsoft.Xna.Framework.RuntimeProfile" />
+    <EmbeddedResource Include="Microsoft.Xna.Framework.RuntimeProfile" LogicalName="Microsoft.Xna.Framework.RuntimeProfile" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="PerformanceMeasuring\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\AngryBirds-v1.5.3.0.0_App\Content\**\*">
+      <Link>Content\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+</Project>

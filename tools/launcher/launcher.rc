@@ -1,0 +1,15 @@
+/*
+ * Windows resources for the launcher.
+ * The icon file is produced by scripts/Make-AngryBirds-Icon.ps1 from
+ *   <project>/AngryBirds-v1.5.3.0.0_App/AngryBirds_Tile_173x173.png
+ * and dropped next to this .rc as AngryBirds.ico. Re-run the script when the
+ * source PNG changes.
+ *
+ * VS_VERSION_INFO is intentionally omitted here: windres/llvm-rc does not
+ * accept the MSVC-only macros (VOS__WINDOWS32, VFT_APP, etc.) that MSVC rc.exe
+ * does. If you need version metadata, inject it as a separate .res through
+ * rc.exe on Windows instead.
+ */
+#include <winuser.h>
+
+1 ICON "AngryBirds.ico"

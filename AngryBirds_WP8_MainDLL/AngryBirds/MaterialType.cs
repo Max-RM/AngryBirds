@@ -1,0 +1,18 @@
+namespace AngryBirds;
+
+public enum MaterialType
+{
+	UNDEFINED,
+	WOOD,
+	ROCK,
+	LIGHT,
+	PIGLETTE,
+	STATIC_GROUND,
+	IMMOVABLE,
+	IMMOVABLE_FRAGILE,
+	CLOUDS,
+	IMMOVABLE_RUBBER,
+	EXTRAS,
+	RUBBER,
+	DECORATION
+}
