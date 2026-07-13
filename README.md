@@ -52,4 +52,4 @@ Despite the fact that the cutscenes were fixed and the game is now fully playabl
 
 Your saves are located in: %LocalAppData%\AngryBirds
 
-Ported by MaxRM, TNT ENTERTAINMENT inc organization in 2026 on July 11.
+Ported by MaxRM, TNT ENTERTAINMENT inc organization in 2026 on July 12.
