@@ -50,4 +50,6 @@ system install.
 ## Todo
 Despite the fact that the cutscenes were fixed and the game is now fully playable, I was unable to properly recycle the game window due to the strangeness of the sprites. Therefore, it is not recommended to change the size of the game window now, but it is planned to fix it in the future.
 
+Your saves are located in: %LocalAppData%\AngryBirds
+
 Ported by MaxRM, TNT ENTERTAINMENT inc organization in 2026 on July 11.
