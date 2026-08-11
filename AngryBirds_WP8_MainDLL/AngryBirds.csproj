@@ -41,4 +41,34 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+
+  <Target Name="AddSavesShortcuts" AfterTargets="Build">
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildThisFileDirectory)..\scripts\Add-SavesShortcuts.ps1&quot; -OutDir &quot;$(TargetDir.TrimEnd('\'))&quot;" />
+  </Target>
+
+  <Target Name="AddSavesShortcutsToPublish" AfterTargets="Publish">
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildThisFileDirectory)..\scripts\Add-SavesShortcuts.ps1&quot; -OutDir &quot;$(PublishDir.TrimEnd('\'))&quot;" />
+  </Target>
+
+  <!--
+    SharpDX 4.0.1 pulls the .NET Core 2.1 Microsoft.NETCore.App metapackage into
+    the dependency graph. When building/publishing with a RuntimeIdentifier the
+    old host libraries land in the output and break the framework-dependent
+    apphost (AngryBirds.exe cannot resolve CoreCLR). None of these files are
+    needed for a framework-dependent app, so remove them right after output
+    generation.
+  -->
+  <Target Name="RemoveNetCore21RuntimeJunk" AfterTargets="Build">
+    <ItemGroup>
+      <NetCore21Junk Include="$(TargetDir)hostfxr.dll;$(TargetDir)hostpolicy.dll;$(TargetDir)apphost.exe;$(TargetDir)dbgshim.dll;$(TargetDir)ucrtbase.dll;$(TargetDir)clrjit.dll;$(TargetDir)mscorrc*.dll;$(TargetDir)sos*.dll;$(TargetDir)SOS.NETCore.dll;$(TargetDir)mscordaccore*;$(TargetDir)api-ms-win-*.dll" />
+    </ItemGroup>
+    <Delete Files="@(NetCore21Junk)" />
+  </Target>
+
+  <Target Name="RemoveNetCore21RuntimeJunkFromPublish" AfterTargets="Publish">
+    <ItemGroup>
+      <NetCore21Junk Include="$(PublishDir)hostfxr.dll;$(PublishDir)hostpolicy.dll;$(PublishDir)apphost.exe;$(PublishDir)dbgshim.dll;$(PublishDir)ucrtbase.dll;$(PublishDir)clrjit.dll;$(PublishDir)mscorrc*.dll;$(PublishDir)sos*.dll;$(PublishDir)SOS.NETCore.dll;$(PublishDir)mscordaccore*;$(PublishDir)api-ms-win-*.dll" />
+    </ItemGroup>
+    <Delete Files="@(NetCore21Junk)" />
+  </Target>
 </Project>

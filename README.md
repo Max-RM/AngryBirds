@@ -44,11 +44,20 @@ system install.
 - AngryBirds-v1.5.3.0.0_App/Content/ вЂ” original game assets referenced by the
   project.
 - scripts/ вЂ” essential build/publish scripts.
+  - Publish-All.ps1 вЂ” builds all four releases into publish\.
+  - Clean-BuildOutput.ps1 вЂ” removes compile caches (obj) and empties
+    AngryBirds_WP8_MainDLL\bin and publish\ (the folders themselves are kept).
+  - Add-SavesShortcuts.ps1 вЂ” adds Open-Saves-Folder.bat and Saves-Folder.lnk
+    (pointing at %LocalAppData%\AngryBirds) into a game folder. It runs
+    automatically after every build/publish via an MSBuild target.
 - 	ools/launcher/ вЂ” tiny native C launchers + the embedded icon.
 - dotnet-runtime-8.0.6-win-arm/ вЂ” bundled ARM32 .NET runtime (optional).
 
 ## Todo
-Despite the fact that the cutscenes were fixed and the game is now fully playable, I was unable to properly recycle the game window due to the strangeness of the sprites. Therefore, it is not recommended to change the size of the game window now, but it is planned to fix it in the future.
+The game window can now be freely resized. The game renders at its native
+800x480 resolution and is presented with aspect ratio preserved: the content
+is scaled uniformly and centered, and the remaining edges are filled with
+black bars.
 
 Your saves are located in: %LocalAppData%\AngryBirds
 

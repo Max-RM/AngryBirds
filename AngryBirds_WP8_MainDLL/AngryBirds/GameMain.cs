@@ -53,6 +53,14 @@ public class GameMain : Game
 
 	private bool _pendingViewportUpdate;
 
+	private const int MinClientWidth = 120;
+
+	private const int MinClientHeight = 72;
+
+	private int _lastGoodClientWidth = 800;
+
+	private int _lastGoodClientHeight = 480;
+
 	public GameMain()
 	{
 		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
@@ -67,6 +75,7 @@ public class GameMain : Game
 		((Game)this).IsMouseVisible = true;
 		((Game)this).Window.AllowUserResizing = true;
 		((Game)this).Window.ClientSizeChanged += OnClientSizeChanged;
+		ApplyMinimumWindowSize();
 		dc.Init();
 		f = 0;
 		g = false;
@@ -223,6 +232,7 @@ public class GameMain : Game
 			bu2.d();
 			c.d();
 			bu2.e();
+			bu2.EndFrame();
 		}
 		if (_displayTitleUpdateMessage && !Guide.IsVisible)
 		{
@@ -358,6 +368,24 @@ public class GameMain : Game
 
 		int width = Math.Max(1, ((Game)this).Window.ClientBounds.Width);
 		int height = Math.Max(1, ((Game)this).Window.ClientBounds.Height);
+
+		bool minimized = IsIconic(((Game)this).Window.Handle);
+		if (minimized)
+		{
+			width = _lastGoodClientWidth;
+			height = _lastGoodClientHeight;
+		}
+		else if (width >= MinClientWidth && height >= MinClientHeight)
+		{
+			_lastGoodClientWidth = width;
+			_lastGoodClientHeight = height;
+		}
+		else
+		{
+			width = Math.Max(MinClientWidth, width);
+			height = Math.Max(MinClientHeight, height);
+		}
+
 		if (b.PreferredBackBufferWidth != width || b.PreferredBackBufferHeight != height)
 		{
 			b.PreferredBackBufferWidth = width;
@@ -378,6 +406,25 @@ public class GameMain : Game
 		}
 
 		_pendingViewportUpdate = true;
+	}
+
+	[System.Runtime.InteropServices.DllImport("user32.dll")]
+	private static extern bool IsIconic(IntPtr hWnd);
+
+	private void ApplyMinimumWindowSize()
+	{
+		try
+		{
+			var window = ((Game)this).Window;
+			var formField = window.GetType().GetField("_form", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+			if (formField?.GetValue(window) is System.Windows.Forms.Form form)
+			{
+				form.MinimumSize = new System.Drawing.Size(MinClientWidth, MinClientHeight);
+			}
+		}
+		catch
+		{
+		}
 	}
 
 	public void ShowMarket()

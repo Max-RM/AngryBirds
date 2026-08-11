@@ -58,6 +58,8 @@ internal class bu
 
 	private int m_backBufferHeight;
 
+	private RenderTarget2D m_renderTarget;
+
 	private static Vector2 t;
 
 	private static Vector2 u;
@@ -552,19 +554,8 @@ internal class bu
 	{
 		m_backBufferWidth = Math.Max(1, backBufferWidth);
 		m_backBufferHeight = Math.Max(1, backBufferHeight);
-		const float logicalWidth = 800f;
-		const float logicalHeight = 480f;
-		float scale = MathHelper.Max(0.001f, Math.Min(m_backBufferWidth / logicalWidth, m_backBufferHeight / logicalHeight));
-		int viewportWidth = (int)(logicalWidth * scale);
-		int viewportHeight = (int)(logicalHeight * scale);
-		int viewportX = (m_backBufferWidth - viewportWidth) / 2;
-		int viewportY = (m_backBufferHeight - viewportHeight) / 2;
-		if (bu.a != null)
-		{
-			bu.a.Viewport = new Viewport(viewportX, viewportY, viewportWidth, viewportHeight);
-		}
 
-		Matrix projection = Matrix.CreateOrthographicOffCenter(0f, logicalWidth, logicalHeight, 0f, 0f, 1f);
+		Matrix projection = Matrix.CreateOrthographicOffCenter(0f, 800f, 480f, 0f, 0f, 1f);
 		Matrix halfPixel = Matrix.CreateTranslation(-0.5f, -0.5f, 0f);
 		if (j != null)
 		{
@@ -574,13 +565,39 @@ internal class bu
 
 	public void ClearBackBuffer(Color color)
 	{
-		if (bu.a == null || m_backBufferWidth <= 0 || m_backBufferHeight <= 0)
+		if (bu.a == null)
 		{
 			return;
 		}
 
-		bu.a.Viewport = new Viewport(0, 0, m_backBufferWidth, m_backBufferHeight);
+		if (m_renderTarget == null || m_renderTarget.IsDisposed)
+		{
+			m_renderTarget = new RenderTarget2D(bu.a, 800, 480, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
+		}
+
+		bu.a.SetRenderTarget(m_renderTarget);
+		bu.a.Viewport = new Viewport(0, 0, m_renderTarget.Width, m_renderTarget.Height);
 		bu.a.Clear(color);
-		UpdateViewport(m_backBufferWidth, m_backBufferHeight);
+	}
+
+	public void EndFrame()
+	{
+		if (bu.a == null || m_renderTarget == null || m_renderTarget.IsDisposed)
+		{
+			return;
+		}
+
+		bu.a.SetRenderTarget(null);
+		bu.a.Viewport = new Viewport(0, 0, m_backBufferWidth, m_backBufferHeight);
+		bu.a.Clear(Color.Black);
+
+		float scale = MathHelper.Max(0.001f, Math.Min(m_backBufferWidth / 800f, m_backBufferHeight / 480f));
+		int drawWidth = (int)(800f * scale);
+		int drawHeight = (int)(480f * scale);
+		Rectangle destination = new Rectangle((m_backBufferWidth - drawWidth) / 2, (m_backBufferHeight - drawHeight) / 2, drawWidth, drawHeight);
+
+		m_c.Begin(m_d, m_e, i, null, null);
+		m_c.Draw(m_renderTarget, destination, Color.White);
+		m_c.End();
 	}
 }
