@@ -5,13 +5,69 @@ namespace AngryBirds.Port;
 
 internal static class DesktopStorage
 {
-    private static readonly string Root = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        "AngryBirds");
+    private static readonly string Root = ResolveRoot();
 
-    static DesktopStorage()
+    private static string ResolveRoot()
     {
-        Directory.CreateDirectory(Root);
+        string root = null;
+        try
+        {
+            string iniPath = Path.Combine(AppContext.BaseDirectory, "AngryBirds.ini");
+            if (File.Exists(iniPath))
+            {
+                string location = ReadIniValue(iniPath, "SaveLocation")?.Trim();
+                if (location == "1")
+                {
+                    root = Path.Combine(AppContext.BaseDirectory, "Saves");
+                }
+                else if (string.Equals(location, "Custom", StringComparison.OrdinalIgnoreCase))
+                {
+                    string savePath = ReadIniValue(iniPath, "SavePath");
+                    if (!string.IsNullOrWhiteSpace(savePath))
+                    {
+                        root = savePath.Trim();
+                    }
+                }
+            }
+        }
+        catch
+        {
+        }
+
+        if (root == null)
+        {
+            root = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "AngryBirds");
+        }
+
+        Directory.CreateDirectory(root);
+        return root;
+    }
+
+    private static string ReadIniValue(string iniPath, string key)
+    {
+        foreach (string raw in File.ReadAllLines(iniPath))
+        {
+            string line = raw.Trim();
+            if (line.Length == 0 || line[0] == ';' || line[0] == '#')
+            {
+                continue;
+            }
+
+            int eq = line.IndexOf('=');
+            if (eq <= 0)
+            {
+                continue;
+            }
+
+            if (line.Substring(0, eq).Trim().Equals(key, StringComparison.OrdinalIgnoreCase))
+            {
+                return line.Substring(eq + 1).Trim();
+            }
+        }
+
+        return null;
     }
 
     public static byte[] ReadAllBytes(string fileName)

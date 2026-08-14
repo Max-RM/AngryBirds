@@ -234,7 +234,7 @@ public class GameMain : Game
 			bu2.e();
 			bu2.EndFrame();
 		}
-		if (_displayTitleUpdateMessage && !Guide.IsVisible)
+		if (_displayTitleUpdateMessage)
 		{
 			_displayTitleUpdateMessage = false;
 			Guide.BeginShowMessageBox(u.a().e("TEXT_TITLE_UPDATE_TITLE"), u.a().e("TEXT_TITLE_UPDATE_TEXT"), (IEnumerable<string>)_dialogButtons, 1, (MessageBoxIcon)3, (AsyncCallback)UpdateDialogGetMBResult, (object)null);

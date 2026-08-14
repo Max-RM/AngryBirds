@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
+using AngryBirds;
 using AngryBirds.Menus;
 using Microsoft.Xna.Framework;
 
@@ -177,14 +178,7 @@ internal class aa : c
 		{
 			if (!ac)
 			{
-				if (au())
-				{
-					b0.d().d("goldenegg").ac();
-				}
-				else
-				{
-					b0.d().d("star_collect").ac();
-				}
+				b0.d().d("star_collect").ac();
 				ac = true;
 			}
 			if (au())
@@ -194,6 +188,7 @@ internal class aa : c
 				y.am = false;
 				w.am = true;
 				x.am = false;
+				b0.d().d("goldenegg").ac();
 			}
 			else
 			{

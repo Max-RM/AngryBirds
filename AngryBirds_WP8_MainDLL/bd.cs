@@ -215,7 +215,7 @@ internal class bd : c
 			((ck)aj).aj = 0f;
 			((ck)aj).al = true;
 			SetMenuState(global::m.MenuState.a);
-			((Game)a0).TargetElapsedTime = TimeSpan.FromTicks(3333L);
+			((Game)a0).TargetElapsedTime = TimeSpan.FromTicks(333333L);
 		}
 	}
 
@@ -241,6 +241,7 @@ internal class bd : c
 		//IL_0092: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0097: Unknown result type (might be due to invalid IL or missing references)
 		//IL_009b: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00a0: Unknown result type (might be due to invalid IL or missing references)
 		base.g(A_0);
 		_ = A_0.ElapsedGameTime.Milliseconds;
 		DateTime now = DateTime.Now;
