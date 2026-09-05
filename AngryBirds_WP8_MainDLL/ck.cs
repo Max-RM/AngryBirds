@@ -9,6 +9,10 @@ internal class ck
 
 	protected bool m_enabledFlag = true;
 
+	public bool m_anchorEnabled = true;
+
+	public bool isChild;
+
 	protected float m_anchorX;
 
 	protected float m_anchorY;

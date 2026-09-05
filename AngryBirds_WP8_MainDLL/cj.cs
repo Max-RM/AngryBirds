@@ -50,6 +50,23 @@ internal class cj : c
 	public override void f()
 	{
 		base.f();
+		if (at != null && at.bf() != null)
+		{
+			if (at.bf().c >= 796)
+			{
+				at.af = 400f;
+				at.ah = bu.VisibleHeight / 2f;
+				at.i(bu.VisibleWidth / (float)at.bf().c);
+				at.ai(bu.VisibleHeight / (float)at.bf().d);
+			}
+			else
+			{
+				at.af = 400f;
+				at.ah = bu.VisibleHeight / 2f;
+				at.i(1f);
+				at.ai(1f);
+			}
+		}
 	}
 
 	public override void g(GameTime A_0)

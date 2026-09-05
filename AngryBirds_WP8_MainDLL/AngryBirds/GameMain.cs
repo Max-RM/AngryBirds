@@ -51,7 +51,7 @@ public class GameMain : Game
 
 	private bool _pendingActivation;
 
-	private bool _pendingViewportUpdate;
+	private bool _pendingViewportUpdate = true;
 
 	private const int MinClientWidth = 120;
 
@@ -60,6 +60,8 @@ public class GameMain : Game
 	private int _lastGoodClientWidth = 800;
 
 	private int _lastGoodClientHeight = 480;
+
+	private bool _wasBackPressed;
 
 	public GameMain()
 	{
@@ -97,8 +99,7 @@ public class GameMain : Game
 			u.a();
 			bu.b(((Game)this).GraphicsDevice);
 			bu.b();
-			bu.b().UpdateViewport(b.PreferredBackBufferWidth, b.PreferredBackBufferHeight);
-			Controls.GetInstance().SetBackBufferSize(b.PreferredBackBufferWidth, b.PreferredBackBufferHeight);
+			ApplyViewportAndControls();
 			a1.a();
 			_dialogButtons = new List<string>();
 			_dialogButtons.Add(u.a().e("SK_NO"));
@@ -201,12 +202,21 @@ public class GameMain : Game
 			{
 				b0.d().d(gameTime, i);
 				Controls.GetInstance().Update(gameTime);
-				g = Controls.GetInstance().IsTapped;
-				if (Controls.GetInstance().IsBackPressed && c.f().a7() == null && (c.f().be() == null || c.f().be().a7() == null))
+			g = Controls.GetInstance().IsTapped;
+			bool backPressed = Controls.GetInstance().IsBackPressed;
+			bool backEdge = backPressed && !_wasBackPressed;
+			_wasBackPressed = backPressed;
+			if (backEdge && c.f() != null && !(c.f() is @as) && c.f().a7() == null && (c.f().be() == null || c.f().be().a7() == null))
+			{
+				// Main menu (and other root pages without their own back navigation):
+				// ask for confirmation instead of exiting instantly.
+				// Submenu pages navigate back themselves, gameplay opens the pause panel.
+				if (!Guide.IsVisible)
 				{
-					((Game)this).Exit();
+					Guide.BeginShowMessageBox(u.a().e("MI_EXIT"), u.a().e("ITEM_ARE_YOU_SURE"), (IEnumerable<string>)_dialogButtons, 1, (MessageBoxIcon)2, (AsyncCallback)ExitDialogGetMBResult, (object)null);
 				}
-				c.c(gameTime);
+			}
+			c.c(gameTime);
 			}
 			base.Update(gameTime);
 		}
@@ -250,6 +260,11 @@ public class GameMain : Game
 
 	protected override void OnActivated(object sender, EventArgs args)
 	{
+		if (Port.DesktopStorage.ShouldKeepRunningInBackground())
+		{
+			base.OnActivated(sender, args);
+			return;
+		}
 		i = false;
 		if (!_gameInitialized)
 		{
@@ -288,6 +303,11 @@ public class GameMain : Game
 
 	protected override void OnDeactivated(object sender, EventArgs args)
 	{
+		if (Port.DesktopStorage.ShouldKeepRunningInBackground())
+		{
+			base.OnDeactivated(sender, args);
+			return;
+		}
 		i = true;
 		if (b0.d().h())
 		{
@@ -344,6 +364,15 @@ public class GameMain : Game
 		}
 	}
 
+	protected void ExitDialogGetMBResult(IAsyncResult userResult)
+	{
+		int? num = Guide.EndShowMessageBox(userResult);
+		if (num.HasValue && num.Value > 0)
+		{
+			((Game)this).Exit();
+		}
+	}
+
 	public void DisableApplicationIdleDetection()
 	{
 		try
@@ -394,8 +423,8 @@ public class GameMain : Game
 		}
 		int actualWidth = Math.Max(1, ((Game)this).GraphicsDevice.PresentationParameters.BackBufferWidth);
 		int actualHeight = Math.Max(1, ((Game)this).GraphicsDevice.PresentationParameters.BackBufferHeight);
-		bu.b()?.UpdateViewport(actualWidth, actualHeight);
-		Controls.GetInstance()?.SetBackBufferSize(actualWidth, actualHeight);
+		bu.b()?.UpdateViewport(actualWidth, actualHeight, width, height);
+		Controls.GetInstance()?.SetBackBufferSize(width, height, actualWidth, actualHeight);
 	}
 
 	private void OnClientSizeChanged(object sender, EventArgs e)

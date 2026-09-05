@@ -150,7 +150,8 @@ internal class bd : c
 		cd obj12 = aj;
 		da da8 = new da();
 		da8.i(u2.g("ARROW_LEFT"));
-		da8.af = (float)u2.g("ABOUT_BG").c - 20f * di.d().e();
+		da8.af = bu.VisibleWidth;
+		da8.ah = 480f - 30f * di.d().e();
 		da8.ah = 480f - 30f * di.d().e();
 		da8.y = base.av;
 		((ck)da8).al = true;
@@ -184,6 +185,25 @@ internal class bd : c
 	public override void f()
 	{
 		base.f();
+		float bottomExtra = bu.VisibleHeight - 480f;
+		at.af = bu.VisibleOffsetX;
+		al.ai(at.be());
+		al.ag(480f + bottomExtra);
+		al.af = bu.VisibleOffsetX;
+		am.af = at.af + (float)at.be();
+		am.ah = 480f - 30f * di.d().e() + bottomExtra;
+		float centerX = at.af + (float)at.be() / 2f;
+		an.af = centerX;
+		ao.af = centerX;
+		ap.af = centerX;
+		aq.af = centerX;
+		ar.af = centerX;
+		@as.af = centerX;
+		av.af = centerX;
+		aw.af = centerX;
+		ax.af = centerX;
+		ay.af = centerX;
+		ai = 0f - at.be();
 	}
 
 	public override void h(GameTime A_0)
@@ -270,9 +290,9 @@ internal class bd : c
 		((ck)al).ak -= 1.5f * num / 30f;
 		if (((ck)al).ak < 0f - (ay.ah + (float)ay.bi()))
 		{
-			((ck)al).ak = 480f;
+			((ck)al).ak = bu.VisibleHeight;
 		}
-		if (((ck)al).ak > 480f)
+		if (((ck)al).ak > bu.VisibleHeight)
 		{
 			((ck)al).ak = 0f - (ay.ah + (float)ay.bi());
 		}

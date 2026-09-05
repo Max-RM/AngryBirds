@@ -157,34 +157,58 @@ internal class bg : cw
 		List<bg> list = a[c];
 		if (list.Count < 4)
 		{
-			if (d == bf.b && !b0.d().h())
+			try
 			{
-				b.Volume = 0f;
-				b.Play();
+				if (d == bf.b && !b0.d().h())
+				{
+					b.Volume = 0f;
+					b.Play();
+				}
+				else
+				{
+					b.Play();
+				}
+				list.Add(this);
+				e = true;
 			}
-			else
+			catch
 			{
-				b.Play();
 			}
-			list.Add(this);
-			e = true;
 		}
 	}
 
 	public void ad()
 	{
-		b.Resume();
+		try
+		{
+			b.Resume();
+		}
+		catch
+		{
+		}
 	}
 
 	public void ae()
 	{
-		b.Stop();
+		try
+		{
+			b.Stop();
+		}
+		catch
+		{
+		}
 		a[c].Remove(this);
 	}
 
 	public void af(bool A_0)
 	{
-		b.Stop(A_0);
+		try
+		{
+			b.Stop(A_0);
+		}
+		catch
+		{
+		}
 		a[c].Remove(this);
 	}
 

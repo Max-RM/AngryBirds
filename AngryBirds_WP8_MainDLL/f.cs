@@ -161,12 +161,13 @@ internal class PauseGamePage : c
 		obj8.be(da8);
 		j.be(new ck
 		{
-			ab = new r(num2, 0, 800, 480),
+			ab = new r((int)bu.VisibleOffsetX - 100, 0, (int)(bu.CanvasRight - bu.VisibleOffsetX) + 100, 480),
 			al = true,
+			m_anchorEnabled = false,
 			y = base.av
 		});
 		p(j);
-		this.m_h = -num;
+		this.m_h = (int)(-num + bu.VisibleOffsetX);
 		((ck)j).aj = this.m_h;
 	}
 
@@ -178,8 +179,9 @@ internal class PauseGamePage : c
 
 	public override void h(GameTime A_0)
 	{
+		((ck)j).al = false;
 		float a_ = (float)A_0.ElapsedGameTime.Milliseconds * 0.001f;
-		bool flag = a(a_, 0);
+		bool flag = a(a_, bu.VisibleOffsetX);
 		bool flag2 = a3().o();
 		if (!q)
 		{
@@ -212,7 +214,7 @@ internal class PauseGamePage : c
 		}
 		if (!flag && !flag2)
 		{
-			((ck)j).aj = 0f;
+			((ck)j).aj = bu.VisibleOffsetX;
 			((ck)j).al = true;
 			SetMenuState(global::m.MenuState.a);
 		}
@@ -279,9 +281,9 @@ internal class PauseGamePage : c
 		}
 	}
 
-	private bool a(float A_0, int A_1)
+	private bool a(float A_0, float A_1)
 	{
-		float num = (float)A_1 - ((ck)j).aj;
+		float num = A_1 - ((ck)j).aj;
 		float num2 = num * A_0 * 10f;
 		if (Math.Abs(num2) > 1f)
 		{

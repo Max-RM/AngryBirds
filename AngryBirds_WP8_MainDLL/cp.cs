@@ -40,6 +40,12 @@ internal class cp : c
 		bu2.b(dc.j);
 		bu2.b(0f, 0f, 800f, 480f);
 		bu2.b(Color.White);
+		if (au != null)
+		{
+			au.af = bu.VisibleOffsetX + bu.VisibleWidth / 2f;
+			au.ah = bu.VisibleOffsetY + bu.VisibleHeight / 2f;
+			au.m_anchorEnabled = false;
+		}
 		base.f();
 	}
 

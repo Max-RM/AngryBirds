@@ -34,7 +34,8 @@ internal class a1
 
 	public static void i()
 	{
-		u.a().a("GOLDEN_EGGS_COMBINED.dat", A_1: true);
+		try { u.a().a("GOLDEN_EGGS_SHEET_1.dat", A_1: true); } catch {}
+		try { u.a().a("GOLDEN_EGGS_COMBINED.dat", A_1: true); } catch {}
 	}
 
 	public static void h()

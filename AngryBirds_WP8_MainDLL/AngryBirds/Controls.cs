@@ -33,6 +33,42 @@ public sealed class Controls
 
 	private float viewportScale = 1f;
 
+	private float m_touchCompX = 1f;
+
+	private float m_touchCompY = 1f;
+
+	private static readonly Keys[] m_letterKeys = new Keys[26]
+	{
+		Keys.A, Keys.B, Keys.C, Keys.D, Keys.E, Keys.F, Keys.G, Keys.H, Keys.I, Keys.J,
+		Keys.K, Keys.L, Keys.M, Keys.N, Keys.O, Keys.P, Keys.Q, Keys.R, Keys.S, Keys.T,
+		Keys.U, Keys.V, Keys.W, Keys.X, Keys.Y, Keys.Z
+	};
+
+	private KeyboardState m_prevKeyboard;
+
+	private string m_cheatBuffer = "";
+
+	private void CheatCheck(KeyboardState keyboard)
+	{
+		for (int i = 0; i < m_letterKeys.Length; i++)
+		{
+			Keys key = m_letterKeys[i];
+			if (keyboard.IsKeyDown(key) && !m_prevKeyboard.IsKeyDown(key))
+			{
+				m_cheatBuffer += (char)(65 + i);
+				if (m_cheatBuffer.Length > 5)
+				{
+					m_cheatBuffer = m_cheatBuffer.Substring(m_cheatBuffer.Length - 5);
+				}
+				if (m_cheatBuffer == "BAGME")
+				{
+					m_cheatBuffer = "";
+					AchievementStore.I().Award("Pig Popper");
+				}
+			}
+		}
+	}
+
 	private Vector2 viewportOffset;
 
 	[CompilerGenerated]
@@ -375,6 +411,22 @@ public sealed class Controls
 		}
 	}
 
+	public int MouseWheelDelta
+	{
+		[CompilerGenerated]
+		get;
+		[CompilerGenerated]
+		private set;
+	}
+
+	public Vector2 MousePosition
+	{
+		get
+		{
+			return mousePosition;
+		}
+	}
+
 	private Controls()
 	{
 	}
@@ -414,19 +466,28 @@ public sealed class Controls
 			Touches = new List<TouchLocation>(MaxPoints);
 		}
 		TouchPanel.EnabledGestures = GestureType.Tap | GestureType.DoubleTap | GestureType.Hold | GestureType.FreeDrag | GestureType.DragComplete | GestureType.Flick | GestureType.Pinch | GestureType.PinchComplete;
-		SetBackBufferSize(800, 480);
+		SetBackBufferSize(800, 480, 800, 480);
 		previousMouseWheelValue = Mouse.GetState().ScrollWheelValue;
 		mouseWheelInitialized = true;
 	}
 
-	public void SetBackBufferSize(int width, int height)
+	public void SetBackBufferSize(int width, int height, int backBufferWidth, int backBufferHeight)
 	{
 		const float logicalWidth = 800f;
 		const float logicalHeight = 480f;
-		viewportScale = MathHelper.Max(0.001f, MathHelper.Min(width / logicalWidth, height / logicalHeight));
-		int viewportWidth = (int)(logicalWidth * viewportScale);
-		int viewportHeight = (int)(logicalHeight * viewportScale);
-		viewportOffset = new Vector2((width - viewportWidth) / 2f, (height - viewportHeight) / 2f);
+		viewportScale = MathHelper.Max(0.001f, MathHelper.Min((float)width / logicalWidth, (float)height / logicalHeight));
+		float visibleWidth = (float)width / viewportScale;
+		float visibleHeight = (float)height / viewportScale;
+		float offsetX = (logicalWidth - visibleWidth) / 2f;
+		float offsetY = 0f;
+		viewportOffset = new Vector2((0f - offsetX) * viewportScale, (0f - offsetY) * viewportScale);
+		m_touchCompX = (float)width / (float)Math.Max(1, backBufferWidth);
+		m_touchCompY = (float)height / (float)Math.Max(1, backBufferHeight);
+	}
+
+	private Vector2 UnscaleTouch(Vector2 touchPosition)
+	{
+		return new Vector2(touchPosition.X * m_touchCompX, touchPosition.Y * m_touchCompY);
 	}
 
 	private Vector2 MapToLogical(Vector2 screenPosition)
@@ -498,6 +559,7 @@ public sealed class Controls
 		IsBackPressed = false;
 		IsTouchPressed = false;
 		IsTouchReleased = false;
+		MouseWheelDelta = 0;
 		GamePadState state = GamePad.GetState((PlayerIndex)0);
 		GamePadButtons buttons = state.Buttons;
 		if ((int)buttons.Back == 1)
@@ -509,14 +571,10 @@ public sealed class Controls
 		{
 			IsBackPressed = true;
 		}
-		if (c.IsConnected)
-		{
-			UpdateTouchPanel();
-		}
-		if (useMouseEmulation || OperatingSystem.IsWindows())
-		{
-			UpdateMouseEmulation(gameTime, c.IsConnected);
-		}
+		CheatCheck(keyboard);
+		m_prevKeyboard = keyboard;
+		UpdateTouchPanel();
+		UpdateMouseEmulation(gameTime, false);
 	}
 
 	private void UpdateTouchPanel()
@@ -537,13 +595,14 @@ public sealed class Controls
 				IsTouchReleased = true;
 				break;
 			}
-			Touches.Add(new TouchLocation(item.Id, item.State, MapToLogical(item.Position)));
+			Vector2 mapped = MapToLogical(UnscaleTouch(item.Position));
+			Touches.Add(new TouchLocation(item.Id, item.State, mapped));
 		}
 		while (TouchPanel.IsGestureAvailable)
 		{
 			GestureSample item2 = TouchPanel.ReadGesture();
-			Vector2 logicalPosition = MapToLogical(item2.Position);
-			Vector2 logicalPosition2 = MapToLogical(item2.Position2);
+			Vector2 logicalPosition = MapToLogical(UnscaleTouch(item2.Position));
+			Vector2 logicalPosition2 = MapToLogical(UnscaleTouch(item2.Position2));
 			Vector2 logicalDelta = item2.Delta / viewportScale;
 			Vector2 logicalDelta2 = item2.Delta2 / viewportScale;
 			GestureSample mapped = new GestureSample(item2.GestureType, item2.Timestamp, logicalPosition, logicalPosition2, logicalDelta, logicalDelta2);
@@ -591,7 +650,7 @@ public sealed class Controls
 		MouseState mouse = Mouse.GetState();
 		UpdateMouseWheelPinch(gameTime, mouse);
 
-		if (suppressWhenTouchTap && (Touches.Count > 0 || IsTapped || IsDoubleTapped || IsDragged || IsDragCompleted))
+		if (suppressWhenTouchTap && Touches.Count > 0)
 		{
 			mouseWasPressed = false;
 			return;
@@ -613,8 +672,11 @@ public sealed class Controls
 			{
 				Vector2 delta = mousePosition - previousMousePosition;
 				Touches.Add(new TouchLocation(0, TouchLocationState.Moved, mousePosition));
-				IsDragged = true;
-				DragGestures.Add(new GestureSample(GestureType.FreeDrag, gameTime.TotalGameTime, mousePosition, Vector2.Zero, delta, Vector2.Zero));
+				if (delta.LengthSquared() > 4f)
+				{
+					IsDragged = true;
+					DragGestures.Add(new GestureSample(GestureType.FreeDrag, gameTime.TotalGameTime, mousePosition, Vector2.Zero, delta, Vector2.Zero));
+				}
 			}
 		}
 		else if (mouseWasPressed)
@@ -630,7 +692,7 @@ public sealed class Controls
 				IsFlicked = true;
 				FlickGestures.Add(new GestureSample(GestureType.Flick, gameTime.TotalGameTime, mousePosition, Vector2.Zero, totalDrag / (float)elapsedSeconds, Vector2.Zero));
 			}
-			if (totalDrag.LengthSquared() <= 100f && (gameTime.TotalGameTime - mouseDownTime).TotalMilliseconds <= 500.0)
+			if (totalDrag.LengthSquared() <= 1600f && (gameTime.TotalGameTime - mouseDownTime).TotalMilliseconds <= 1200.0)
 			{
 				IsTapped = true;
 				TapGestures.Add(new GestureSample(GestureType.Tap, gameTime.TotalGameTime, mousePosition, Vector2.Zero, Vector2.Zero, Vector2.Zero));
@@ -656,6 +718,8 @@ public sealed class Controls
 			return;
 		}
 
+		MouseWheelDelta = wheelDelta;
+
 		Vector2 center = MapToLogical(new Vector2(mouse.X, mouse.Y));
 		Vector2 left = center + new Vector2(-50f, 0f);
 		Vector2 right = center + new Vector2(50f, 0f);
@@ -666,3 +730,4 @@ public sealed class Controls
 		PinchGestures.Add(new GestureSample(GestureType.Pinch, gameTime.TotalGameTime, left, right, delta, delta2));
 	}
 }
+

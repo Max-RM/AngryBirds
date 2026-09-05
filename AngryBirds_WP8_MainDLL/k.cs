@@ -64,6 +64,7 @@ internal class k : cd
 		this.m_a = new List<ck>();
 		this.m_d = k.SliderState.a;
 		e = u.a().g("MENU_SLIDER_BG");
+		this.m_anchorEnabled = false;
 	}
 
 	public void i(da A_0, da A_1)
@@ -96,6 +97,7 @@ internal class k : cd
 		this.m_a.Add(A_0);
 		A_0.ah = ((ck)this).ah;
 		A_0.af = base.af;
+		A_0.m_anchorEnabled = false;
 		A_0.al = false;
 		bf(c);
 		be(c);
@@ -185,6 +187,7 @@ internal class k : cd
 			{
 				this.m_a[num4].ak = Enumerable.First<ck>((IEnumerable<ck>)this.m_a).ak + (float)(num4 * be());
 			}
+			this.m_a[num4].m_anchorEnabled = false;
 			if (this.m_a[num4].ak >= num)
 			{
 				this.m_a[num4].ak = num;

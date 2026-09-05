@@ -93,10 +93,33 @@ Every build output contains:
 
 ## Window
 
-The game window can be freely resized. The game renders at its native
-800x480 resolution and is presented with aspect ratio preserved: the content
-is scaled uniformly and centered, and the remaining edges are filled with
-black bars.
+The game window can be freely resized. The game uses full-bleed widescreen:
+at wider/taller windows more of the world becomes visible (no black bars)
+and the HUD/menus anchor to the visible edges. Touch/mouse input is
+remapped to the logical 800x480 canvas, so clicks stay accurate at any size.
+
+Pressing ESC in the main menu asks for confirmation before exiting
+(uses the game's own localized "Quit" / "Are you sure?" strings).
+In submenus ESC goes back one level as before, and in levels it opens
+the pause panel.
+
+### Keep running when inactive
+
+By default the game pauses when its window loses focus (original behavior).
+To keep it running while Alt-Tabbed (e.g. no freeze when switching to
+another app), set in AngryBirds.ini:
+
+```
+[Window]
+KeepRunningInBackground=1
+```
+
+## Achievements
+
+Achievements work locally without Xbox LIVE and persist in
+achievements.json next to AngryBirds.exe. Typing BAGME on the keyboard
+awards "Pig Popper" (debug/test cheat). Lists (achievements, leaderboards)
+scroll by dragging or with the mouse wheel when the cursor is over the list.
 
 ## Project structure
 

@@ -24,6 +24,18 @@ internal class cr : ck
 
 	private bool av = true;
 
+	private float cb_shiftX;
+
+	private float cb_shiftY;
+
+	private float cb_lastX;
+
+	private float cb_lastY;
+
+	private int cb_motionFrames;
+
+	private bool cb_hasLast;
+
 	[CompilerGenerated]
 	private int aw;
 
@@ -190,6 +202,46 @@ internal class cr : ck
 		ar = list.ToArray();
 	}
 
+	private void cc_UpdateAnchor()
+	{
+		if (!m_anchorEnabled || this.isChild)
+		{
+			this.cb_shiftX = 0f;
+			this.cb_shiftY = 0f;
+			return;
+		}
+		float rawX = base.af + aj;
+		float rawY = base.ah + ((ck)this).ak;
+		if (this.cb_hasLast)
+		{
+			float dx = Math.Abs(rawX - this.cb_lastX);
+			float dy = Math.Abs(rawY - this.cb_lastY);
+			if (dx > 0.4f || dy > 0.4f)
+			{
+				this.cb_motionFrames = 3;
+			}
+			else if (this.cb_motionFrames > 0)
+			{
+				this.cb_motionFrames--;
+			}
+		}
+		this.cb_lastX = rawX;
+		this.cb_lastY = rawY;
+		this.cb_hasLast = true;
+		if (this.cb_motionFrames == 0)
+		{
+			float w = (float)bh();
+			float h = (float)bi() + (float)bl().a();
+			this.cb_shiftX = bu.AnchorShiftX(rawX, w);
+			this.cb_shiftY = bu.AnchorShiftY(rawY, h);
+		}
+		else
+		{
+			this.cb_shiftX = 0f;
+			this.cb_shiftY = 0f;
+		}
+	}
+
 	public override void i()
 	{
 		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
@@ -206,6 +258,7 @@ internal class cr : ck
 		{
 			bf();
 		}
+		this.cc_UpdateAnchor();
 		int num = bl().a();
 		float num2 = 0f;
 		float num3 = 0f;
@@ -214,8 +267,8 @@ internal class cr : ck
 		{
 			for (int num4 = 0; num4 < ar.Length; num4++)
 			{
-				num2 = base.af + aj;
-				num3 = base.ah + ((ck)this).ak + (float)(num4 * num);
+				num2 = base.af + aj + this.cb_shiftX;
+				num3 = base.ah + ((ck)this).ak + this.cb_shiftY + (float)(num4 * num);
 				if (!(ar[num4] == "") && !(num3 < (float)(-num)) && !(num3 > (float)(480 + num)))
 				{
 					zero.X = num2;
@@ -227,8 +280,8 @@ internal class cr : ck
 		}
 		for (int num5 = 0; num5 < ap.Length; num5++)
 		{
-			num2 = base.af + aj;
-			num3 = base.ah + ((ck)this).ak + (float)(num5 * num);
+			num2 = base.af + aj + this.cb_shiftX;
+			num3 = base.ah + ((ck)this).ak + this.cb_shiftY + (float)(num5 * num);
 			if (!(ap[num5] == "") && !(num3 < (float)(-num)) && !(num3 > (float)(480 + num)))
 			{
 				zero.X = num2;

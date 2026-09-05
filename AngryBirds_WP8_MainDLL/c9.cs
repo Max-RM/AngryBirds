@@ -506,6 +506,31 @@ internal class c9 : cd
 			bt();
 			be(A_0: true);
 		}
+		int wheelDelta = Controls.GetInstance().MouseWheelDelta;
+		if (wheelDelta != 0 && bu())
+		{
+			Vector2 mousePos = Controls.GetInstance().MousePosition;
+			if (!(mousePos.X < base.af) && !(mousePos.X > base.af + bj()) && !(mousePos.Y < ((ck)this).ah) && !(mousePos.Y > ((ck)this).ah + be()))
+			{
+				float step = MathHelper.Clamp((float)wheelDelta / 120f, -4f, 4f) * 60f;
+				float visible = ((be() < bk().Y) ? be() : bk().Y);
+				float minAk = 0f - (bk().Y - visible - ((ck)this).ah);
+				if (minAk > 0f)
+				{
+					minAk = 0f;
+				}
+				float newAk = ((ck)this).ak + step;
+				if (newAk > 0f)
+				{
+					newAk = 0f;
+				}
+				if (newAk < minAk)
+				{
+					newAk = minAk;
+				}
+				((ck)this).ak = newAk;
+			}
+		}
 		SyncChildOffsets();
 	}
 
@@ -683,6 +708,7 @@ internal class c9 : cd
 				ck2.aj = ((ck)this).aj;
 			}
 			ck2.ak = ((ck)this).ak;
+			ck2.m_anchorEnabled = false;
 		}
 	}
 }

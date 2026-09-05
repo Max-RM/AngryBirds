@@ -60,10 +60,15 @@ internal class p
 		foreach (KeyValuePair<string, LuaVariable> item2 in luaParser.Value.GetArray())
 		{
 			List<Vector2> list = new List<Vector2>();
-			foreach (KeyValuePair<string, LuaVariable> item3 in item2.Value[A_0].GetArray())
+			var arrayDict = item2.Value.GetArray();
+			LuaVariable targetReso = arrayDict != null && arrayDict.ContainsKey(A_0) ? arrayDict[A_0] : (arrayDict != null && arrayDict.ContainsKey("RESO_800") ? arrayDict["RESO_800"] : null);
+			if (targetReso != null && targetReso.GetArray() != null)
 			{
-				item = new Vector2((float)item3.Value["x"], (float)item3.Value["y"]);
-				list.Add(item);
+				foreach (KeyValuePair<string, LuaVariable> item3 in targetReso.GetArray())
+				{
+					item = new Vector2((float)item3.Value["x"], (float)item3.Value["y"]);
+					list.Add(item);
+				}
 			}
 			d.Add(item2.Key, list);
 		}

@@ -494,6 +494,8 @@ internal class bw
 		SignedInGamer val = Gamer.SignedInGamers[(PlayerIndex)0];
 		if (val == null)
 		{
+			AchievementStore.I().Award(A_0);
+			A_1?.Invoke(null);
 			return;
 		}
 		if (c != null)

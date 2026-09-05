@@ -54,11 +54,93 @@ internal class bu
 
 	private static Vector2 s;
 
-	private int m_backBufferWidth;
+	private int m_backBufferWidth = 800;
 
-	private int m_backBufferHeight;
+	private int m_backBufferHeight = 480;
 
-	private RenderTarget2D m_renderTarget;
+	private int m_viewportX;
+
+	private int m_viewportY;
+
+	private int m_drawWidth = 800;
+
+	private int m_drawHeight = 480;
+
+	private Matrix m_spriteTransform = Matrix.Identity;
+
+	private const float LOGICAL_WIDTH = 800f;
+
+	private const float LOGICAL_HEIGHT = 480f;
+
+	private float m_contentScale = 1f;
+
+	private float m_visibleWidth = 800f;
+
+	private float m_visibleHeight = 480f;
+
+	private float m_visibleOffsetX;
+
+	private float m_visibleOffsetY;
+
+	public static float ContentScale
+	{
+		get
+		{
+			if (bu.m_b != null)
+			{
+				return bu.m_b.m_contentScale;
+			}
+			return 1f;
+		}
+	}
+
+	public static float VisibleWidth
+	{
+		get
+		{
+			if (bu.m_b != null)
+			{
+				return bu.m_b.m_visibleWidth;
+			}
+			return 800f;
+		}
+	}
+
+	public static float VisibleHeight
+	{
+		get
+		{
+			if (bu.m_b != null)
+			{
+				return bu.m_b.m_visibleHeight;
+			}
+			return 480f;
+		}
+	}
+
+	public static float VisibleOffsetX
+	{
+		get
+		{
+			if (bu.m_b != null)
+			{
+				return bu.m_b.m_visibleOffsetX;
+			}
+			return 0f;
+		}
+	}
+
+	public static float VisibleOffsetY
+	{
+		get
+		{
+			if (bu.m_b != null)
+			{
+				return bu.m_b.m_visibleOffsetY;
+			}
+			return 0f;
+		}
+	}
 
 	private static Vector2 t;
 
@@ -210,7 +292,11 @@ internal class bu
 	public void d()
 	{
 		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		this.m_c.Begin(this.m_d, this.m_e, i, (DepthStencilState)null, (RasterizerState)null);
+		if (bu.a != null)
+		{
+			bu.a.Viewport = new Viewport(m_viewportX, m_viewportY, m_drawWidth, m_drawHeight);
+		}
+		this.m_c.Begin(this.m_d, this.m_e, i, (DepthStencilState)null, (RasterizerState)null, (Effect)null, (Matrix?)m_spriteTransform);
 	}
 
 	public void e()
@@ -247,6 +333,16 @@ internal class bu
 	{
 		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
 		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
+		if (A_0.X <= 0 && A_0.X + A_0.Width >= 800 && VisibleOffsetX < -0.01f)
+		{
+			A_0.X = (int)VisibleOffsetX;
+			A_0.Width = (int)VisibleWidth;
+		}
+		if (A_0.Y <= 0 && A_0.Y + A_0.Height >= 480 && VisibleHeight > 480.5f)
+		{
+			A_0.Y = (int)VisibleOffsetY;
+			A_0.Height = (int)VisibleHeight;
+		}
 		this.m_c.Draw(h, A_0, g);
 	}
 
@@ -278,7 +374,7 @@ internal class bu
 		//IL_00b1: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00bb: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00c0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c6: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00cc: Unknown result type (might be due to invalid IL or missing references)
 		s.X = A_1;
 		s.Y = A_2;
 		t.X = A_0.e;
@@ -289,6 +385,18 @@ internal class bu
 		v.Y = A_0.b;
 		v.Width = A_0.c;
 		v.Height = A_0.d;
+		if (Math.Abs(A_1) <= 0.5f && Math.Abs(A_2) <= 0.5f && Math.Abs(A_3 - 1f) <= 0.01f && Math.Abs(A_4 - 1f) <= 0.01f && A_0.c >= 796 && A_0.c <= 804 && A_0.d >= 476 && A_0.d <= 484)
+		{
+			float ox = VisibleOffsetX;
+			float oy = VisibleOffsetY;
+			if (ox < -0.01f || VisibleHeight > 480.5f)
+			{
+				s.X = ox;
+				s.Y = oy;
+				u.X = VisibleWidth / (float)A_0.c;
+				u.Y = VisibleHeight / (float)A_0.d;
+			}
+		}
 		this.m_c.Draw(A_0.g.b(), s, (Rectangle?)v, g, 0f, t, u, this.m_f, 0f);
 	}
 
@@ -538,6 +646,10 @@ internal class bu
 			k.SetData<NestedStructA>(q * 4 * r, o, 0, 4 * p, r, val);
 			j.Texture2 = x;
 			j.Texture = w;
+			if (bu.a != null)
+			{
+				bu.a.Viewport = new Viewport(m_viewportX, m_viewportY, m_drawWidth, m_drawHeight);
+			}
 			bu.a.SetVertexBuffer((VertexBuffer)(object)k);
 			bu.a.Indices = l;
 			foreach (EffectPass pass in ((Effect)j).CurrentTechnique.Passes)
@@ -550,16 +662,40 @@ internal class bu
 		p = 0;
 	}
 
-	public void UpdateViewport(int backBufferWidth, int backBufferHeight)
+	public void UpdateViewport(int backBufferWidth, int backBufferHeight, int windowWidth, int windowHeight)
 	{
 		m_backBufferWidth = Math.Max(1, backBufferWidth);
 		m_backBufferHeight = Math.Max(1, backBufferHeight);
+		float winW = Math.Max(1f, (float)windowWidth);
+		float winH = Math.Max(1f, (float)windowHeight);
 
-		Matrix projection = Matrix.CreateOrthographicOffCenter(0f, 800f, 480f, 0f, 0f, 1f);
+		float scale = MathHelper.Max(0.001f, Math.Min(winW / 800f, winH / 480f));
+		m_contentScale = scale;
+		m_visibleWidth = winW / scale;
+		m_visibleHeight = winH / scale;
+		m_visibleOffsetX = (800f - m_visibleWidth) / 2f;
+		m_visibleOffsetY = 0f;
+		m_drawWidth = m_backBufferWidth;
+		m_drawHeight = m_backBufferHeight;
+		m_viewportX = 0;
+		m_viewportY = 0;
+
+		float compX = (float)m_backBufferWidth / winW;
+		float compY = (float)m_backBufferHeight / winH;
+		float sx = scale * compX;
+		float sy = scale * compY;
+		m_spriteTransform = Matrix.CreateScale(sx, sy, 1f) * Matrix.CreateTranslation(0f - m_visibleOffsetX * sx, 0f - m_visibleOffsetY * sy, 0f);
+
+		Matrix projection = Matrix.CreateOrthographicOffCenter(m_visibleOffsetX, m_visibleOffsetX + m_visibleWidth, m_visibleOffsetY + m_visibleHeight, m_visibleOffsetY, 0f, 1f);
 		Matrix halfPixel = Matrix.CreateTranslation(-0.5f, -0.5f, 0f);
 		if (j != null)
 		{
 			j.Projection = halfPixel * projection;
+		}
+
+		if (bu.a != null)
+		{
+			bu.a.Viewport = new Viewport(m_viewportX, m_viewportY, m_drawWidth, m_drawHeight);
 		}
 	}
 
@@ -570,34 +706,66 @@ internal class bu
 			return;
 		}
 
-		if (m_renderTarget == null || m_renderTarget.IsDisposed)
-		{
-			m_renderTarget = new RenderTarget2D(bu.a, 800, 480, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-		}
-
-		bu.a.SetRenderTarget(m_renderTarget);
-		bu.a.Viewport = new Viewport(0, 0, m_renderTarget.Width, m_renderTarget.Height);
+		bu.a.SetRenderTarget(null);
+		bu.a.Viewport = new Viewport(m_viewportX, m_viewportY, m_drawWidth, m_drawHeight);
 		bu.a.Clear(color);
 	}
 
 	public void EndFrame()
 	{
-		if (bu.a == null || m_renderTarget == null || m_renderTarget.IsDisposed)
-		{
-			return;
-		}
-
-		bu.a.SetRenderTarget(null);
-		bu.a.Viewport = new Viewport(0, 0, m_backBufferWidth, m_backBufferHeight);
-		bu.a.Clear(Color.Black);
-
-		float scale = MathHelper.Max(0.001f, Math.Min(m_backBufferWidth / 800f, m_backBufferHeight / 480f));
-		int drawWidth = (int)(800f * scale);
-		int drawHeight = (int)(480f * scale);
-		Rectangle destination = new Rectangle((m_backBufferWidth - drawWidth) / 2, (m_backBufferHeight - drawHeight) / 2, drawWidth, drawHeight);
-
-		m_c.Begin(m_d, m_e, i, null, null);
-		m_c.Draw(m_renderTarget, destination, Color.White);
-		m_c.End();
 	}
+
+	public static float AnchorShiftX(float x, float width)
+	{
+		float ox = VisibleOffsetX;
+		if (ox >= -0.01f)
+		{
+			return 0f;
+		}
+		if (Math.Abs(x) <= 44f)
+		{
+			return ox;
+		}
+		if (Math.Abs(x + width - 800f) <= 44f)
+		{
+			return 0f - ox;
+		}
+		if (Math.Abs(x - 800f) <= 44f)
+		{
+			return 0f - ox;
+		}
+		return 0f;
+	}
+
+	public static float AnchorShiftY(float y, float height)
+	{
+		float extra = VisibleOffsetY + VisibleHeight - 480f;
+		if (extra <= 0.01f)
+		{
+			return 0f;
+		}
+		if (Math.Abs(y) <= 44f)
+		{
+			return VisibleOffsetY;
+		}
+		if (Math.Abs(y + height - 480f) <= 44f)
+		{
+			return extra;
+		}
+		if (Math.Abs(y - 480f) <= 44f)
+		{
+			return extra;
+		}
+		return 0f;
+	}
+
+	public static float CanvasRight
+	{
+		get
+		{
+			return VisibleOffsetX + VisibleWidth;
+		}
+	}
+
+	internal static bool AllowStretch;
 }

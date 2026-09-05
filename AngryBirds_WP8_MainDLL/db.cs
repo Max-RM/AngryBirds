@@ -615,11 +615,13 @@ internal class db : y
 			num = num2 * c10.e;
 			float num4 = (0f - l) * num2 * c10.d;
 			float num5 = (float)c10.a.c * num - 1f;
-			float num6 = 800f / num2;
+			float num6 = bu.VisibleWidth / num2;
+			float numExt = (bu.VisibleWidth - 800f) / num2;
 			if (c10.f)
 			{
-				int num7 = (int)(num6 / num5) + 2;
-				float num8 = num4 % num5 - (float)c10.a.e * num;
+				float numExtF = ((num5 > 0.5f) ? (float)(int)(numExt / num5) + 1f : 0f);
+				int num7 = (int)(num6 / num5) + 2 + (int)numExtF;
+				float num8 = num4 % num5 - (float)c10.a.e * num - numExtF * num5;
 				if (num4 > 0f)
 				{
 					num8 -= num5;
@@ -633,8 +635,10 @@ internal class db : y
 			}
 			else
 			{
-				int num9 = (int)(num6 / (num5 + c10.g * num)) + 2;
-				float num10 = num4 % (num5 + c10.g * num) - (float)c10.a.e * num;
+				float period = num5 + c10.g * num;
+				float numExtF2 = ((period > 0.5f) ? (float)(int)(numExt / period) + 1f : 0f);
+				int num9 = (int)(num6 / period) + 2 + (int)numExtF2;
+				float num10 = num4 % period - (float)c10.a.e * num - numExtF2 * period;
 				if (num4 > 0f)
 				{
 					num10 -= c10.g * num;
@@ -669,9 +673,11 @@ internal class db : y
 			c10 = a10.d[num5];
 			float num6 = (0f - l) * num;
 			float num7 = (float)c10.a.c * num4 - 1f;
-			float num8 = 800f / num;
-			int num9 = (int)(num8 / num7) + 2;
-			float num10 = num6 % num7 - (float)c10.a.e * num4;
+			float num8 = bu.VisibleWidth / num;
+			float numExt = (bu.VisibleWidth - 800f) / num;
+			float numExtF = ((num7 > 0.5f) ? (float)(int)(numExt / num7) + 1f : 0f);
+			int num9 = (int)(num8 / num7) + 2 + (int)numExtF;
+			float num10 = num6 % num7 - (float)c10.a.e * num4 - numExtF * num7;
 			if (num6 > 0f)
 			{
 				num10 -= num7;
@@ -696,7 +702,7 @@ internal class db : y
 		if ((float)this.m_g.Count < num && b9.a(1, 5) == 1)
 		{
 			int num2 = b9.a(3, 5);
-			float a_ = b9.a(-600, 600);
+			float a_ = b9.a(-600, 600) + bu.VisibleOffsetX;
 			float a_2 = 480f + 30f * di.d().g();
 			float num3 = (float)num2 * 0.2f;
 			float num4 = (float)b9.a(100, 350) * num3 * (di.d().e() + 1f) * 0.5f;
@@ -716,7 +722,7 @@ internal class db : y
 				a_4 = b9.a() * (float)Math.PI * 1.5f;
 				break;
 			case 2:
-				a_ = b9.a(80, 719);
+				a_ = b9.a(80 + (int)bu.VisibleOffsetX, 719 - (int)bu.VisibleOffsetX);
 				num5 = (float)b9.a(-250, -150) * num3 * (di.d().g() + 1f) * 0.175f;
 				num4 = 0f;
 				break;
@@ -754,7 +760,7 @@ internal class db : y
 			}
 			b11.t(b11.t() + b11.n() * A_0);
 			b11.s(b11.x() + b11.r() * A_0);
-			if (b11.x() > 480f + 50f * di.d().g() || b11.t() > 800f + 50f * di.d().e() || (b11.w() == 2 && b11.x() < (float)(-b11.u().d)))
+			if (b11.x() > bu.VisibleHeight + 50f * di.d().g() || b11.t() > bu.CanvasRight + 50f * di.d().e() || b11.t() < bu.VisibleOffsetX - 50f * di.d().e() || (b11.w() == 2 && b11.x() < (float)(-b11.u().d)))
 			{
 				this.m_h.Push(this.m_g[num7]);
 				this.m_g.RemoveAt(num7);

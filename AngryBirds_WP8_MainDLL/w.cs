@@ -62,36 +62,51 @@ internal class w : z
 
 	private void au()
 	{
-		u u2 = u.a();
-		cd cd2 = (cd)Enumerable.Last<ck>((IEnumerable<ck>)a1().bw());
-		a8 a10 = di.d().f("packFacebook1");
-		ae ae2 = u2.g(a10.c);
-		s = (z.LevelButton)cd2.bw()[0];
-		t = (z.LevelButton)cd2.bw()[1];
-		v = (z.LevelButton)cd2.bw()[2];
-		da da2 = new da();
-		da2.i(u2.g("FB_LIKE_BUTTON"));
-		da2.af = cd2.af;
-		da2.ah = 158.40001f;
-		da2.y = OnFacebookClick;
-		((ck)da2).al = true;
-		da2.aa = u2.f("menu_confirm");
-		da da3 = da2;
-		cd2.be(s);
-		cd2.be(t);
-		cd2.be(v);
-		cd2.be(da3);
-		float a_ = da3.ah + (float)(da3.bf().d / 2) + (float)(s.m.bf().d / 2);
-		s.i(cd2.af - (float)ae2.c - 40f, a_);
-		t.i(cd2.af, a_);
-		v.i(cd2.af + (float)ae2.c + 40f, a_);
-		da da4 = new da();
-		da4.i(u2.g("BUTTON_FACEBOOK_SMALL"));
-		da4.i(0.5f);
-		da4.ai(0.5f);
-		da4.am = false;
-		da a_2 = da4;
-		a0().i(a0().be() - 1, a_2);
+		try
+		{
+			u u2 = u.a();
+			cd cd2 = (cd)Enumerable.Last<ck>((IEnumerable<ck>)a1().bw());
+			a8 a10 = di.d().f("packFacebook1");
+			if (a10 == null) return;
+			ae ae2 = u2.g(a10.c);
+			if (ae2 == null) return;
+			s = (z.LevelButton)cd2.bw()[0];
+			t = (z.LevelButton)cd2.bw()[1];
+			v = (z.LevelButton)cd2.bw()[2];
+			da da2 = new da();
+			ae fbLike = u2.g("FB_LIKE_BUTTON") ?? u2.g("BUTTON_FACEBOOK_SMALL") ?? ae2;
+			da2.i(fbLike);
+			da2.af = cd2.af;
+			da2.ah = 158.40001f;
+			da2.y = OnFacebookClick;
+			((ck)da2).al = true;
+			da2.aa = u2.f("menu_confirm");
+			da da3 = da2;
+			cd2.be(s);
+			cd2.be(t);
+			cd2.be(v);
+			cd2.be(da3);
+			int d1 = da3.bf() != null ? da3.bf().d : 50;
+			int d2 = (s != null && s.m != null && s.m.bf() != null) ? s.m.bf().d : 50;
+			float a_ = da3.ah + (float)(d1 / 2) + (float)(d2 / 2);
+			if (s != null) s.i(cd2.af - (float)ae2.c - 40f, a_);
+			if (t != null) t.i(cd2.af, a_);
+			if (v != null) v.i(cd2.af + (float)ae2.c + 40f, a_);
+			da da4 = new da();
+			ae fbSmall = u2.g("BUTTON_FACEBOOK_SMALL") ?? fbLike;
+			if (fbSmall != null)
+			{
+				da4.i(fbSmall);
+				da4.i(0.5f);
+				da4.ai(0.5f);
+				da4.am = false;
+				da a_2 = da4;
+				a0().i(a0().be() - 1, a_2);
+			}
+		}
+		catch
+		{
+		}
 	}
 
 	public override void h(GameTime A_0)

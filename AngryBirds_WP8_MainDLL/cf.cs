@@ -1335,12 +1335,12 @@ internal class cf
 				{
 					this.m_ao = this.m_ap;
 				}
-				this.m_ai.a(this.m_an, new Vector2((float)(797 - this.m_ao), 2f), this.m_aj);
-				this.m_ai.a(this.a.ToString(), new Vector2(797f, 2f), this.m_aj);
+				this.m_ai.a(this.m_an, new Vector2((float)(797 - this.m_ao) + bu.CanvasRight - 800f, 2f), this.m_aj);
+				this.m_ai.a(this.a.ToString(), new Vector2(797f + bu.CanvasRight - 800f, 2f), this.m_aj);
 				num7 = this.m_ai.a();
 			}
-			this.m_ai.a(this.m_al, new Vector2((float)(797 - this.m_ao), (float)(2 + num7)), this.m_aj);
-			this.m_ai.a(this.m_am.ToString(), new Vector2(797f, (float)(2 + num7)), this.m_ak);
+			this.m_ai.a(this.m_al, new Vector2((float)(797 - this.m_ao) + bu.CanvasRight - 800f, (float)(2 + num7)), this.m_aj);
+			this.m_ai.a(this.m_am.ToString(), new Vector2(797f + bu.CanvasRight - 800f, (float)(2 + num7)), this.m_ak);
 		}
 		if (ah() != null)
 		{
@@ -1380,11 +1380,13 @@ internal class cf
 			num = num2 * c10.e;
 			float num4 = (0f - an().i()) * num2 * c10.d;
 			float num5 = (float)c10.a.c * num - 1f;
-			float num6 = 800f / num2;
-			int num7 = (int)(num6 / num5) + 2;
+			float num6 = bu.VisibleWidth / num2;
+			float numExt = (bu.VisibleWidth - 800f) / num2;
+			float numExtF = ((num5 > 0.5f) ? (float)(int)(numExt / num5) + 1f : 0f);
+			int num7 = (int)(num6 / num5) + 2 + (int)numExtF;
 			if (c10.f)
 			{
-				float num8 = num4 % num5 - (float)c10.a.e * num;
+				float num8 = num4 % num5 - (float)c10.a.e * num - numExtF * num5;
 				if (num4 > 0f)
 				{
 					num8 -= num5;
@@ -1418,7 +1420,7 @@ internal class cf
 		a2 a10 = di.d().f();
 		c5 c10 = a10.d[0];
 		bu.b().b(a10.f);
-		bu.b().b(0f, A_2, 800f, 481f);
+		bu.b().b(0f, A_2, 800f, Math.Max(481f, bu.VisibleHeight - A_2 + 1f));
 		bu.b().b(Color.White);
 		num3 = num * num2;
 		for (int num4 = 0; num4 < a10.d.Count; num4++)
@@ -1426,9 +1428,11 @@ internal class cf
 			c10 = a10.d[num4];
 			float num5 = (0f - an().i()) * num;
 			float num6 = (float)c10.a.c * num3 - 1f;
-			float num7 = 800f / num;
-			int num8 = (int)(num7 / num6) + 2;
-			float num9 = num5 % num6 - (float)c10.a.e * num3;
+			float num7 = bu.VisibleWidth / num;
+			float numExt = (bu.VisibleWidth - 800f) / num;
+			float numExtF = ((num6 > 0.5f) ? (float)(int)(numExt / num6) + 1f : 0f);
+			int num8 = (int)(num7 / num6) + 2 + (int)numExtF;
+			float num9 = num5 % num6 - (float)c10.a.e * num3 - numExtF * num6;
 			if (num5 > 0f)
 			{
 				num9 -= num6;

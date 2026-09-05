@@ -74,6 +74,7 @@ internal class b3 : c
 		da2.ah = 0f;
 		((ck)da2).al = false;
 		da2.i(800 / u2.g("LEADERBOARD_TOP_BAR").c);
+		da2.bb_stretchEdges = true;
 		obj.be(da2);
 		a2 = new cd();
 		a2.af = 0f;
@@ -107,6 +108,7 @@ internal class b3 : c
 		da4.ah = 480f;
 		((ck)da4).al = false;
 		da4.i(800 / u2.g("LEADERBOARD_BOTTOM_BAR").c);
+		da4.bb_stretchEdges = true;
 		obj4.be(a4 = da4);
 		a0 = new cd();
 		((ck)a0).am = false;
@@ -152,7 +154,9 @@ internal class b3 : c
 		da9.af = 800 - u2.g("SCROLL_BAR").c;
 		da9.ah = at + u2.g("SCROLL_BAR").d / 2;
 		da9.am = false;
-		p(a3 = da9);
+		a3 = da9;
+		a3.m_anchorEnabled = false;
+		p(a3);
 		ax.be(a0);
 		ax.be(a1);
 		p(aw);
@@ -167,6 +171,10 @@ internal class b3 : c
 		bu2.b(0f, 0f, 800f, 480f);
 		bu2.b(Color.White);
 		base.f();
+		if (a3 != null && a3.bf() != null)
+		{
+			a3.af = bu.CanvasRight - (float)u.a().g("SCROLL_BAR").c / 2f;
+		}
 	}
 
 	public override void h(GameTime A_0)
@@ -181,6 +189,7 @@ internal class b3 : c
 		c10.ag(A_0: false);
 		c10.ai(A_0: false);
 		c10.bg(A_0: true);
+		c10.ag(bu.VisibleHeight);
 		ay = c10;
 		((ck)ay).ak = 0f;
 		av = 0;
@@ -211,7 +220,8 @@ internal class b3 : c
 			a2.bv();
 		}
 		a3.am = false;
-		a3.ah = at + u.a().g("SCROLL_BAR").d / 2;
+		a3.ah = (float)at + u.a().g("SCROLL_BAR").d / 2;
+		a3.ai(1f);
 		a6 = false;
 		base.SetMenuState(global::m.MenuState.b);
 	}
@@ -225,18 +235,32 @@ internal class b3 : c
 			if (((ck)ay).al)
 			{
 				ay.bs();
-				float num = 480 - at;
-				float num2 = (0f - ((ck)ay).ak) / ((float)av - num);
-				a3.ai(num / (float)a3.bf().d * (480f / (float)av));
-				if (a3.bh() > num / (float)a3.bf().d)
+				float visH = bu.VisibleHeight;
+				float num = visH - (float)at;
+				float range = (float)av - num;
+				if (range < 1f)
 				{
-					a3.ai(num / (float)a3.bf().d);
+					range = 1f;
 				}
-				if (a3.bh() < 0.5f)
+				float num2 = (0f - ((ck)ay).ak) / range;
+				num2 = Math.Max(0f, Math.Min(1f, num2));
+				if ((float)av > num)
 				{
-					a3.ai(0.5f);
+					a3.ai(num / (float)a3.bf().d * (visH / (float)av));
+					if (a3.bh() > num / (float)a3.bf().d)
+					{
+						a3.ai(num / (float)a3.bf().d);
+					}
+					if (a3.bh() < 0.5f)
+					{
+						a3.ai(0.5f);
+					}
+					a3.ah = (float)at + (float)a3.bf().d * a3.bh() / 2f + (num - (float)a3.bf().d * a3.bh()) * num2;
 				}
-				a3.ah = (float)at + (float)a3.bf().d * a3.bh() / 2f + (num - (float)a3.bf().d * a3.bh()) * num2;
+				else
+				{
+					a3.ah = (float)at + (float)a3.bf().d * a3.bh() / 2f;
+				}
 			}
 			ay.d(A_0);
 		}
@@ -330,6 +354,7 @@ internal class b3 : c
 				da2.ah = ((ck)a2).ah;
 				((ck)da2).al = false;
 				da2.i(800 / u2.g("LEADERBOARD_TOP_BAR").c);
+				da2.bb_stretchEdges = true;
 				obj.be(da2);
 				cd obj2 = a2;
 				cr cr2 = new cr();
@@ -389,6 +414,7 @@ internal class b3 : c
 			da4.af = 0f;
 			da4.ah = num5;
 			da4.i(num10);
+			da4.bb_stretchEdges = true;
 			obj6.be(da4);
 			c9 obj7 = ay;
 			da da5 = new da();

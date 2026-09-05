@@ -90,15 +90,15 @@ internal class ac : c
 			p(aa = da8);
 		}
 		k k2 = new k();
-		k2.af = 60f;
-		((ck)k2).ah = 430f;
+		k2.af = 60f + bu.VisibleOffsetX;
+		((ck)k2).ah = 430f + (bu.VisibleHeight - 480f);
 		((ck)k2).am = true;
 		((ck)k2).al = true;
 		k2.i(65);
 		p(ab = k2);
 		k k3 = new k();
-		k3.af = 740f;
-		((ck)k3).ah = 430f;
+		k3.af = 740f - bu.VisibleOffsetX;
+		((ck)k3).ah = 430f + (bu.VisibleHeight - 480f);
 		((ck)k3).am = true;
 		((ck)k3).al = true;
 		k3.i(65);
@@ -178,6 +178,26 @@ internal class ac : c
 	public override void f()
 	{
 		base.f();
+		ac_Reposition(ab, 60f + bu.VisibleOffsetX, 430f + (bu.VisibleHeight - 480f));
+		ac_Reposition(m_ac, 740f - bu.VisibleOffsetX, 430f + (bu.VisibleHeight - 480f));
+	}
+
+	private static void ac_Reposition(ck A_0, float A_1, float A_2)
+	{
+		if (A_0 == null)
+		{
+			return;
+		}
+		A_0.af = A_1;
+		A_0.ah = A_2;
+		cd cd2 = A_0 as cd;
+		if (cd2 != null)
+		{
+			for (int num = 0; num < cd2.bw().Count; num++)
+			{
+				ac_Reposition(cd2.bw()[num], A_1, A_2);
+			}
+		}
 	}
 
 	public override void h(GameTime A_0)

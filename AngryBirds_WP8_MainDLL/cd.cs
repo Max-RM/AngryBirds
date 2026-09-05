@@ -47,14 +47,7 @@ internal class cd : ck
 	{
 		for (int num = 0; num < t.Count; num++)
 		{
-			if (t[num] is cd cd2)
-			{
-				cd2.PropagateXToChildren(value);
-			}
-			else
-			{
-				t[num].aj = value;
-			}
+			t[num].aj = value;
 		}
 	}
 
@@ -126,6 +119,7 @@ internal class cd : ck
 	public virtual void be(ck A_0)
 	{
 		t.Add(A_0);
+		A_0.isChild = true;
 		A_0.aj = base.aj;
 		A_0.ak = ak;
 	}

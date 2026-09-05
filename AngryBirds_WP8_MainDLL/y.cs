@@ -125,9 +125,9 @@ internal class y
 		}
 		if (k() != null)
 		{
-			float a_ = 800f / (float)k().c;
-			float a_2 = 480f / (float)k().d;
-			bu2.b(k(), A_0, A_1, a_, a_2);
+			float a_ = bu.VisibleWidth / (float)k().c;
+			float a_2 = bu.VisibleHeight / (float)k().d;
+			bu2.b(k(), bu.VisibleOffsetX + A_0, bu.VisibleOffsetY + A_1, a_, a_2);
 		}
 	}
 

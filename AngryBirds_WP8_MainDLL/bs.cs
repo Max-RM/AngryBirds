@@ -7,6 +7,10 @@ internal class bs
 {
 	public static string b(string A_0, string A_1, string A_2)
 	{
+		if (string.IsNullOrEmpty(A_0))
+		{
+			return string.Empty;
+		}
 		AesManaged aesManaged = null;
 		MemoryStream memoryStream = null;
 		CryptoStream cryptoStream = null;
@@ -33,6 +37,10 @@ internal class bs
 
 	public static string a(string A_0, string A_1, string A_2)
 	{
+		if (string.IsNullOrEmpty(A_0))
+		{
+			return string.Empty;
+		}
 		AesManaged aesManaged = null;
 		MemoryStream memoryStream = null;
 		CryptoStream cryptoStream = null;

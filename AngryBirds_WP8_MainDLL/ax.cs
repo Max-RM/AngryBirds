@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using AngryBirds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.GamerServices;
@@ -48,6 +50,7 @@ internal class ax : c
 		da2.ah = 0f;
 		((ck)da2).al = false;
 		da2.i(800 / u2.g("ACHIEVEMENTS_TOP_BAR").c);
+		da2.bb_stretchEdges = true;
 		obj.be(da2);
 		cd obj2 = an;
 		cr cr2 = new cr();
@@ -78,7 +81,9 @@ internal class ax : c
 		da5.af = 800 - u2.g("SCROLL_BAR").c;
 		da5.ah = al + u2.g("SCROLL_BAR").d / 2;
 		da5.am = false;
-		p(aq = da5);
+		aq = da5;
+		aq.m_anchorEnabled = false;
+		p(aq);
 		p(an);
 	}
 
@@ -91,23 +96,26 @@ internal class ax : c
 		bu2.b(0f, 0f, 800f, 480f);
 		bu2.b(Color.White);
 		base.f();
+		if (aq != null && aq.bf() != null)
+		{
+			aq.af = bu.CanvasRight - (float)u.a().g("SCROLL_BAR").c / 2f;
+		}
 	}
 
 	public override void h(GameTime A_0)
 	{
 		if (!at)
 		{
-			u.a();
-			bw.d().e(a);
 			at = true;
 			c9 c10 = new c9();
 			c10.i(A_0: true);
 			c10.ag(A_0: false);
 			c10.ai(A_0: false);
 			c10.bg(A_0: true);
+			c10.ag(bu.VisibleHeight);
 			ao = c10;
 			am = 0;
-			a8().f(A_0: true);
+			a(AchievementStore.I().Entries);
 		}
 	}
 
@@ -118,7 +126,8 @@ internal class ax : c
 			f("listContent");
 		}
 		aq.am = false;
-		aq.ah = al + u.a().g("SCROLL_BAR").d / 2;
+		aq.ah = (float)al + u.a().g("SCROLL_BAR").d / 2;
+		aq.ai(1f);
 		at = false;
 		base.SetMenuState(global::m.MenuState.b);
 		a8().f(A_0: false);
@@ -139,12 +148,20 @@ internal class ax : c
 		{
 			return;
 		}
+		float visH = bu.VisibleHeight;
+		float bottom = 480f + (visH - 480f);
 		if (((ck)ao).al)
 		{
 			ao.bs();
-			float num = 480 - al;
-			float num2 = (0f - ((ck)ao).ak) / ((float)am - num);
-			aq.ai(num / (float)aq.bf().d * (480f / (float)am));
+			float num = visH - (float)al;
+			float range = (float)am - num;
+			if (range < 1f)
+			{
+				range = 1f;
+			}
+			float num2 = (0f - ((ck)ao).ak) / range;
+			num2 = Math.Max(0f, Math.Min(1f, num2));
+			aq.ai(num / (float)aq.bf().d * (visH / (float)am));
 			if (aq.bh() > num / (float)aq.bf().d)
 			{
 				aq.ai(num / (float)aq.bf().d);
@@ -158,23 +175,8 @@ internal class ax : c
 		ao.d(A_0);
 	}
 
-	private void a(object A_0)
+	private void a(List<AchievementStore.Entry> val)
 	{
-		//IL_0570: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0580: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0241: Unknown result type (might be due to invalid IL or missing references)
-		//IL_028f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0443: Unknown result type (might be due to invalid IL or missing references)
-		//IL_049d: Unknown result type (might be due to invalid IL or missing references)
-		a8().f(A_0: false);
-		AchievementCollection val = (AchievementCollection)((A_0 is AchievementCollection) ? A_0 : null);
-		if (val == null)
-		{
-			at = false;
-			base.SetMenuState(global::m.MenuState.a);
-			return;
-		}
-		a8().f(A_0: false);
 		int num = 0;
 		int num2 = 0;
 		int num3 = 0;
@@ -183,14 +185,14 @@ internal class ax : c
 		int num5 = u2.g("ACHIEVEMENTS_DARK_BAR").d;
 		int num6 = 0;
 		aq.am = val.Count > aj;
-		foreach (Achievement item in val)
+		foreach (AchievementStore.Entry item in val)
 		{
 			num6 = al + num * num5;
 			int num7 = num6 + num5 / 2;
 			int num8 = num6 + num5 / 3;
 			int num9 = num6 + num5 / 3 * 2;
 			am += num5;
-			int gamerScore = item.GamerScore;
+			int gamerScore = item.Score;
 			num2 += gamerScore;
 			cd cd2 = new cd();
 			cd2.af = 400f;
@@ -200,9 +202,10 @@ internal class ax : c
 			da2.i((num % 2 == 0) ? u2.g("ACHIEVEMENTS_DARK_BAR") : u2.g("ACHIEVEMENTS_LIGHT_BAR"));
 			da2.af = 0f;
 			da2.ah = num6;
+			da2.bb_stretchEdges = true;
 			da2.i((num % 2 == 0) ? ((800 - u2.g("SCROLL_BAR").c - 14) / u2.g("ACHIEVEMENTS_DARK_BAR").c) : ((800 - u2.g("SCROLL_BAR").c - 14) / u2.g("ACHIEVEMENTS_LIGHT_BAR").c));
 			cd3.be(da2);
-			if (!item.IsEarned)
+			if (!item.Earned)
 			{
 				da da3 = new da();
 				da3.i(u2.g("ACHIEVEMENT_NOT_ACQUIRED"));
@@ -227,13 +230,12 @@ internal class ax : c
 			}
 			else
 			{
-				Texture2D val2 = Texture2D.FromStream(bu.a, item.GetPictureStream());
-				ca ca2 = new ca(val2);
-				ae a_ = ca2.b("ACHIEVEMENT", 0, 0, val2.Width, val2.Height, val2.Width / 2, val2.Height / 2);
 				da da4 = new da();
-				da4.i(a_);
+				da4.i(u2.g("GAMESCORE_ICON"));
 				da4.af = 50f;
 				da4.ah = num7;
+				da4.i(2f);
+				da4.ai(2f);
 				cd3.be(da4);
 				num3++;
 				num4 += gamerScore;
@@ -252,14 +254,14 @@ internal class ax : c
 				cd3.be(cr5);
 			}
 			cr cr6 = new cr();
-			cr6.i(item.IsEarned ? item.Description : item.HowToEarn);
+			cr6.i(item.Description);
 			cr6.af = 130f;
 			cr6.ah = num9;
 			cr6.ad = new a7(bn.a, dh.b);
 			cr6.i(u.a().a("FONT_WP7_LIVE.dat"));
 			cr6.i(new Color(78, 196, 133, 255));
 			cd3.be(cr6);
-			if (!item.IsEarned)
+			if (!item.Earned)
 			{
 				cr cr7 = new cr();
 				cr7.i(gamerScore.ToString());
@@ -310,8 +312,8 @@ internal class ax : c
 		cr10.ah = u2.g("ACHIEVEMENTS_TOP_BAR").d / 2;
 		cr10.ad = new a7(bn.c, dh.b);
 		obj2.be(ar = cr10);
-		ar.i(num4 + "/" + num2);
-		@as.i(num3 + "/20 " + u2.e("TEXT_ACHIEVEMENT_ACHIEVED"));
+		ar.i(num4 + "/" + AchievementStore.I().TotalScore());
+		@as.i(num3 + "/" + val.Count + " " + u2.e("TEXT_ACHIEVEMENT_ACHIEVED"));
 		if (e("blackLine") != null)
 		{
 			f("blackLine");
